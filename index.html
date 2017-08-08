@@ -21,65 +21,11 @@
 	<div>
 		<div id="btn">有种点我!</div>
 	</div>
-	<div unselectable="on" onselectstart="return false;" class="wCalendar_box_c">
-		<div class="wCalendar_box_layer"></div>
-		<div class="wCalendar_box">
-			<div class="start_box">
-				<div class="cal_description">Start Date and Time</div>
-				<div class="cal_month">
-					<span class="turn_left">&lt;</span>
-					<span class="show_mnth"></span>
-					<span class="turn_rigt">&gt;</span>
-				</div>
-				<div class="cal_calendar">
-					<div class="cal_week">
-						<span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-					</div>
-					<div class="cal_date"></div>
-				</div>
-				<div class="cal_progress">
-					<div class="cal_sub_pro">
-						<div class="cal_pro_point"></div>
-					</div>
-				</div>
-			</div>
-			<div class="end_box">
-				<div class="cal_description">End Date and Time</div>
-				<div class="cal_month">
-					<span class="turn_left">&lt;</span>
-					<span class="show_mnth"></span>
-					<span class="turn_rigt">&gt;</span>
-				</div>
-				<div class="cal_calendar">
-					<div class="cal_week">
-						<span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
-					</div>
-					<div class="cal_date"></div>
-				</div>
-				<div class="cal_progress">
-					<div class="cal_sub_pro">
-						<div class="cal_pro_point"></div>
-					</div>
-				</div>
-			</div>
-			<div class="cal_buttons">
-				<input class="cal_button" type="button" value="Cancel">
-				<input class="cal_button" type="button" value="Confirm">
-			</div>
-			<div class="arrow top">
-				<div class="arrow_bg"></div>
-			</div>
-			<div class="arrow bottom"></div>
-			<div class="folding">to</div>
-		</div>
-	</div>
-	<div unselectable="on" onselectstart="return false;" class="wCalendar_box_c" style="display: block;"><div class="wCalendar_box_layer"></div><div class="wCalendar_box" style="top: 76px; left: 250.5px;"><div class="start_box"><div class="cal_description">Start Date and Time</div><div class="cal_month"><span class="turn_left">&lt;</span><span class="show_mnth">2017.5</span><span class="turn_rigt">&gt;</span></div><div class="cal_calendar"><div class="cal_week"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div><div class="cal_date"><span>&nbsp;</span><span class="enabled">1</span><span class="enabled">2</span><span class="enabled">3</span><span class="enabled">4</span><span class="enabled">5</span><span class="enabled">6</span><span class="enabled">7</span><span class="enabled">8</span><span class="enabled">9</span><span class="enabled">10</span><span class="enabled">11</span><span class="enabled">12</span><span class="enabled">13</span><span class="enabled">14</span><span class="enabled">15</span><span class="enabled">16</span><span class="enabled">17</span><span class="current">18</span><span class="enabled">19</span><span class="enabled">20</span><span class="enabled">21</span><span class="enabled">22</span><span class="enabled">23</span><span class="enabled">24</span><span class="enabled">25</span><span class="enabled">26</span><span class="enabled">27</span><span class="enabled">28</span><span class="enabled">29</span><span class="enabled">30</span><span class="enabled">31</span></div></div><div class="cal_progress"><div class="cal_sub_pro" style="width: 58.0645%;"><div class="cal_pro_point"></div></div></div></div><div class="end_box"><div class="cal_description">End Date and Time</div><div class="cal_month"><span class="turn_left">&lt;</span><span class="show_mnth">2017.5</span><span class="turn_rigt">&gt;</span></div><div class="cal_calendar"><div class="cal_week"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div><div class="cal_date"><span>&nbsp;</span><span class="disabled">1</span><span class="disabled">2</span><span class="disabled">3</span><span class="disabled">4</span><span class="disabled">5</span><span class="disabled">6</span><span class="disabled">7</span><span class="disabled">8</span><span class="disabled">9</span><span class="disabled">10</span><span class="disabled">11</span><span class="disabled">12</span><span class="disabled">13</span><span class="disabled">14</span><span class="disabled">15</span><span class="disabled">16</span><span class="disabled">17</span><span class="current">18</span><span class="enabled">19</span><span class="enabled">20</span><span class="enabled">21</span><span class="enabled">22</span><span class="enabled">23</span><span class="enabled">24</span><span class="enabled">25</span><span class="enabled">26</span><span class="enabled">27</span><span class="enabled">28</span><span class="enabled">29</span><span class="enabled">30</span><span class="enabled">31</span></div></div><div class="cal_progress"><div class="cal_sub_pro" style="width: 58.0645%;"><div class="cal_pro_point"></div></div></div></div><div class="cal_buttons"><input class="cal_button" type="button" value="Cancel"><input class="cal_button" type="button" value="Confirm"></div><div class="arrow top" style="display: block;"><div class="arrow_bg"></div></div><div class="arrow bottom" style="display: none;"></div><div class="folding">to</div></div></div>
-
-	<script type="text/javascript" src="jquery-2.1.4.min.js"></script>
+	<script type="text/javascript" src="develop/tool.js"></script>
 	<script type="text/javascript" src="develop/wCalendar.js"></script>
-	<script type="text/javascript" src="wCalendar.js"></script>
 	<script type="text/javascript">
-		var btn = $('#btn');
+		var btn = document.getElementById('btn');
+		var calendar = wCalendar.init(btn);
 	</script>
 </body>
 </html>

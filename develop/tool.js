@@ -44,6 +44,7 @@
 			_loop(this.nodeList, function(item) {
 				item.setAttribute(attr, value);
 			});
+			return this;
 		}
 		return;
 	};
@@ -52,12 +53,28 @@
 		_loop(this.nodeList, function(item) {
 			item.innerHTML = content;
 		});
+		return this;
 	};
-	$.prototype.prepend = function(node) {
+	$.prototype.text = function(content) {
 		
 		_loop(this.nodeList, function(item) {
-			item.prepend(node.nodeList[0]);
+			item.innerText = content;
 		});
+		return this;
+	};
+	$.prototype.empty = function() {
+
+		_loop(this.nodeList, function(item) {
+			item.innerHTML = '';
+		});
+		return this;
+	};
+	$.prototype.append = function(node) {
+
+		_loop(this.nodeList, function(item) {
+			item.appendChild(node.nodeList[0]);
+		});
+		return this;
 	};
 	$.prototype.after = function(node) {
 
@@ -73,6 +90,18 @@
 			}
 		});
 	};
+	$.prototype.find = function(selector) {
+
+		var nodeList = [];
+		_loop(this.nodeList, function(item) {
+			var resultList = item.querySelectorAll(selector);
+			for (var i = 0; i < resultList.length; i ++) {
+				nodeList.push(resultList[i]);
+			}
+		});
+		return new $(nodeList);
+	};
+	$.prototype.click = function() {};
 
 	// 添加到window对象中
 	window.$wCalendar = function(selector) {

@@ -11,8 +11,323 @@
 
 })(typeof window !== "undefined" ? window : this, function(window, $) {
 
-	var cssContent = '{cssContent}';
-	var htmlContent = '{htmlContent}';
+	var cssContent = '\
+		.wCalendar-box-c {\
+			top: 0;\
+			left: 0;\
+			z-index: 9998;\
+			position: absolute;\
+			display: none;\
+		}\
+		.wCalendar-box-c * {\
+			cursor: default;\
+		}\
+		.wCalendar-box-layer {\
+			top: 0;\
+			left: 0;\
+			z-index: 1;\
+			width: 100%;\
+			height: 100%;\
+			position: fixed;\
+			background: rgba(0, 0, 0, 0.3);\
+		}\
+		.wCalendar-box {\
+			color: #9e9e9e;\
+			font-family: "Arial";\
+			width: 497px;\
+			height: 324px;\
+			border: 1px solid #d2d9de;\
+			background: #fff;\
+			position: absolute;\
+			border-bottom: none;\
+			border-radius: 4px;\
+			z-index: 2;\
+			box-sizing: content-box;\
+		}\
+		.wCalendar-box .arrow {\
+			width: 0;\
+			height: 0;\
+			left: 25%;\
+			margin-left: -8px;\
+			position: absolute;\
+			border-style: solid;\
+			display: none;\
+		}\
+		.wCalendar-box.arrow-right .arrow {\
+			left: auto;\
+			margin-left: 0;\
+			right: 25%;\
+			margin-right: -8px;\
+		}\
+		.wCalendar-box .arrow .arrow-bg {\
+			width: 0;\
+			height: 0;\
+			position: absolute;\
+			border-style: solid;\
+		}\
+		.wCalendar-box .arrow.top {\
+			top: -16px;\
+			border-width: 0 13px 16px 13px;\
+			border-color: transparent transparent #d2d9de transparent;\
+		}\
+		.wCalendar-box .arrow.top .arrow-bg {\
+			top: 1px;\
+			left: -11px;\
+			border-width: 0px 11px 15px 11px;\
+			border-color: transparent transparent #fff transparent;\
+		}\
+		.wCalendar-box .arrow.bottom {\
+			bottom: -16px;\
+			border-width: 16px 13px 0 13px;\
+			border-color: #3b78e7 transparent transparent transparent;\
+		}\
+		.wCalendar-box .folding {\
+			top: 164px;\
+			left: 50%;\
+			margin-left: -17px;\
+			width: 32px;\
+			height: 32px;\
+			color: #3b78e7;\
+			font-size: 15px;\
+			font-weight: bold;\
+			position: absolute;\
+			border-radius: 32px;\
+			line-height: 32px;\
+			text-align: center;\
+			border: 1px solid #d2d9de;\
+			background: #fff;\
+		}\
+		.wCalendar-box .start-box {\
+			top: 0;\
+			left: 0;\
+			width: 248px;\
+			height: 100%;\
+			position: absolute;\
+		}\
+		.wCalendar-box .end-box {\
+			top: 0;\
+			right: 0;\
+			width: 248px;\
+			height: 100%;\
+			position: absolute;\
+			border-left: 1px solid #d2d9de;\
+			box-sizing: content-box;\
+		}\
+		.wCalendar-box .cal-description {\
+			height: 42px;\
+			color: #3b78e7;\
+			font-size: 14px;\
+			line-height: 44px;\
+			text-align: center;\
+		}\
+		.wCalendar-box .cal-month {\
+			height: 32px;\
+			color: #3e3e3e;\
+			font-size: 14px;\
+			background: #f1f1f1;\
+			text-align: center;\
+			line-height: 32px;\
+			position: relative;\
+		}\
+		.wCalendar-box .cal-month .turn-left, .wCalendar-box .cal-month .turn-rigt {\
+			width: 54px;\
+			font-size: 18px;\
+			cursor: pointer;\
+			font-family: "Sim Hei";\
+			font-weight: bold;\
+			transition: all .4s;\
+			-moz-transition: all .4s;\
+			-webkit-transition: all .4s;\
+			-o-transition: all .4s;\
+		}\
+		.wCalendar-box .cal-month .turn-left:hover, .wCalendar-box .cal-month .turn-rigt:hover {\
+			color: #3b78e7;\
+			background: rgba(0, 0, 0, .1);\
+		}\
+		.wCalendar-box .cal-month .turn-left {\
+			left: 0;\
+			text-align: left;\
+			padding-left: 18px;\
+			position: absolute;\
+		}\
+		.wCalendar-box .cal-month .turn-rigt {\
+			right: 0;\
+			text-align: right;\
+			padding-right: 18px;\
+			position: absolute;\
+		}\
+		.wCalendar-box .cal-calendar {\
+		}\
+		.wCalendar-box .cal-calendar .cal-week, .wCalendar-box .cal-calendar .cal-date {\
+			width: 196px;\
+			margin-left: auto;\
+			margin-right: auto;\
+		}\
+		.wCalendar-box .cal-calendar span {\
+			width: 22px;\
+			height: 22px;\
+			margin: 3px 3px 0 3px;\
+			line-height: 22px;\
+			font-size: 12px;\
+			text-align: center;\
+			display: inline-block;\
+		}\
+		.wCalendar-box .cal-calendar .cal-week {\
+			margin-top: 12px;\
+		}\
+		.wCalendar-box .cal-calendar .cal-week span {\
+			color: #3b78e7;\
+		}\
+		.wCalendar-box .cal-calendar .cal-date {\
+			height: 160px;\
+		}\
+		.wCalendar-box .cal-calendar .cal-date span {\
+			border-radius: 2px;\
+		}\
+		.wCalendar-box .cal-calendar .cal-date span.disabled {\
+			color: #bdbdbd;\
+			cursor: default;\
+		}\
+		.wCalendar-box .cal-calendar .cal-date span.enabled {\
+			color: #000;\
+			cursor: pointer;\
+		}\
+		.wCalendar-box .cal-calendar .cal-date span.enabled:hover {\
+			color: #fff;\
+			background: #3b78e7;\
+		}\
+		.wCalendar-box .cal-calendar .cal-date span.current {\
+			color: #fff;\
+			background: #3b78e7;\
+			cursor: default;\
+		}\
+		.wCalendar-box .cal-progress {\
+			width: 196px;\
+			height: 1px;\
+			background: #d2d9de;\
+			margin: 2px auto 0 auto;\
+		}\
+		.wCalendar-box .cal-progress .cal-sub-pro {\
+			width: 0%;\
+			height: 100%;\
+			background: #3b78e7;\
+			position: relative;\
+		}\
+		.wCalendar-box .cal-progress .cal-sub-pro .cal-pro-point {\
+			width: 9px;\
+			height: 9px;\
+			top: -4px;\
+			right: -5px;\
+			background: #3b78e7;\
+			border-radius: 10px;\
+			position: absolute;\
+		}\
+		.wCalendar-box div.cal-buttons {\
+			left: 0;\
+			bottom: 0;\
+			width: 100%;\
+			height: 36px;\
+			position: absolute;\
+			overflow: hidden;\
+			border-radius: 0 0 4px 4px;\
+		}\
+		.wCalendar-box .cal-buttons input.cal-button {\
+			width: 248px;\
+			height: 100%;\
+			color: #fff;\
+			font-size: 14px;\
+			font-family: "Arial";\
+			cursor: pointer;\
+			border: none;\
+			background: #3b78e7;\
+			top: 0;\
+			left: 0;\
+			margin: 0;\
+			transition: color 300ms, background 300ms;\
+			-moz-transition: color 300ms, background 300ms;\
+			-webkit-transition: color 300ms, background 300ms;\
+			-o-transition: color 300ms, background 300ms;\
+		}\
+		.wCalendar-box .cal-buttons input.cal-button:hover {\
+			color: #3b78e7;\
+			background: #e0e0e0;\
+		}\
+		.wCalendar-box .cal-buttons input.cal-button:focus {\
+			outline: 0;\
+		}\
+		.wCalendar-box .cal-buttons input:first-child {\
+			float: left;\
+		}\
+		.wCalendar-box .cal-buttons input:last-child {\
+			float: right;\
+		}\
+	';
+	var htmlContent = '\
+		<div unselectable="on" onselectstart="return false;" class="wCalendar-box-c">\
+			<div class="wCalendar-box-layer"></div>\
+			<div class="wCalendar-box">\
+				<div class="start-box">\
+					<div class="cal-description"></div>\
+					<div class="cal-month">\
+						<span class="turn-left">&lt;</span>\
+						<span class="show-mnth"></span>\
+						<span class="turn-rigt">&gt;</span>\
+					</div>\
+					<div class="cal-calendar">\
+						<div class="cal-week">\
+							<span>S</span>\
+							<span>M</span>\
+							<span>T</span>\
+							<span>W</span>\
+							<span>T</span>\
+							<span>F</span>\
+							<span>S</span>\
+						</div>\
+						<div class="cal-date"></div>\
+					</div>\
+					<div class="cal-progress">\
+						<div class="cal-sub-pro">\
+							<div class="cal-pro-point"></div>\
+						</div>\
+					</div>\
+				</div>\
+				<div class="end-box">\
+					<div class="cal-description"></div>\
+					<div class="cal-month">\
+						<span class="turn-left">&lt;</span>\
+						<span class="show-mnth"></span>\
+						<span class="turn-rigt">&gt;</span>\
+					</div>\
+					<div class="cal-calendar">\
+						<div class="cal-week">\
+							<span>S</span>\
+							<span>M</span>\
+							<span>T</span>\
+							<span>W</span>\
+							<span>T</span>\
+							<span>F</span>\
+							<span>S</span>\
+						</div>\
+						<div class="cal-date"></div>\
+					</div>\
+					<div class="cal-progress">\
+						<div class="cal-sub-pro">\
+							<div class="cal-pro-point"></div>\
+						</div>\
+					</div>\
+				</div>\
+				<div class="cal-buttons">\
+					<input class="cal-button" type="button" value="Cancel">\
+					<input class="cal-button" type="button" value="Confirm">\
+				</div>\
+				<div class="arrow top">\
+					<div class="arrow-bg"></div>\
+				</div>\
+				<div class="arrow bottom"></div>\
+				<div class="folding">to</div>\
+			</div>\
+		</div>\
+	';
 
 	// 所有calendar实例共享一个样式
 	var cssNode = $('style#wCalendarStyle');
@@ -131,7 +446,7 @@
 			timeTurned = calendar.endTimeTurned;
 			calendar.endTimeSelected = new Date(timeTurned.getFullYear(), timeTurned.getMonth(), date);
 		}
-		this.setItems();
+		this.setItems(0).setItems(1);
 	};
 	// 设置日期
 	CalendarNode.prototype.setItems = function(type) {
@@ -193,10 +508,43 @@
 		node.find('.end-box .cal-progress .cal-sub-pro').css('width', pctEnd + '%');
 		return this;
 	};
+	// 显示
+	CalendarNode.prototype.show = function() {
+
+		var calendarEle = this.node;
+		var ele = this.calendar.outsetNode;
+		var top, left, calendarBox = calendarEle.find('.wCalendar-box'), offsetX = ele.offset().left, offsetY = ele.offset().top, width = ele.width(), height = ele.height();
+		calendarEle.find('.arrow').hide();
+		if ($(window).width() - offsetX - width > offsetX) {
+			left = offsetX;
+			calendarBox.removeClass('arrow-right');
+		}
+		else {
+			left = offsetX + width - 499;
+			calendarBox.addClass('arrow-right');
+		}
+		if ($(window).height() - offsetY - height > offsetY) {
+			top = offsetY + height + 20;
+			calendarEle.find('.arrow.top').show();
+		}
+		else {
+			top = offsetY - 346;
+			calendarEle.find('.arrow.bottom').show();
+		}
+		calendarBox.css('top', top + 'px').css('left', left + 'px');
+		calendarEle.show();
+		return this;
+	};
+	// 隐藏
+	CalendarNode.prototype.hide = function() {
+
+		this.node.hide();
+		return this;
+	};
 	// 更新
 	CalendarNode.prototype.update = function() {
 
-		this.setMonth().setItems().setProgress();
+		this.setMonth().setItems(0).setItems(1).setProgress();
 		return this;
 	};
 
@@ -206,7 +554,7 @@
 		var self = this, stamp, startTimeStamp, endTimeStamp, wCalendarBoxRootNode;
 
 		// 依据定位的元素(必填)
-		self.outsetNode = outsetNode;
+		self.outsetNode = $(outsetNode);
 
 		// 日历模式: 0-日，1-周，2-月
 		self.mode = _deal(config, 'mode', 0);
@@ -242,15 +590,21 @@
 	fn.show = function() {
 
 		// 显示元素
-		this.calendarBox.show();
+		this.calendarNodeInstance.show();
 	};
 
 	//隐藏日历
 	fn.hide = function() {
 
-		// 隐藏元素
-		this.calendarBox.hide();
 		// 恢复用户选中的时间为日历时间并且定位到当前页
+		var startTime = new Date(this.startTime.getTime());
+		var endTime = new Date(this.endTime.getTime());
+		this.startTimeSelected = new Date(startTime.getTime());
+		this.startTimeTurned = new Date(startTime.getTime());
+		this.endTimeSelected = new Date(endTime.getTime());
+		this.endTimeTurned = new Date(endTime.getTime());
+		// 隐藏并更新元素
+		this.calendarNodeInstance.hide().update();
 	};
 
 	//设置日历时间；可传入两个13位时间戳格式的参数或六个年月日的组合，如setTime(1466352000000, 1466438399000)，或setTime(2015,1,2,2015,12,20);设置成功返回true，失败返回false
