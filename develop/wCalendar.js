@@ -14,6 +14,14 @@
 	var cssContent = '{cssContent}';
 	var htmlContent = '{htmlContent}';
 
+	// 所有calendar实例共享一个样式
+	var cssNode = $('style#wCalendarStyle');
+	if (cssNode.nodeList.length <= 0) {
+		var cssNode = $(document.createElement('style'));
+		cssNode.html(cssContent);
+		$('body').append(cssNode);
+	}
+
 	// 判断返回key的值或默认的值
 	var _deal = function(obj, key, defaultValue) {
 
@@ -29,27 +37,18 @@
 
 		throw new Error(info);
 	};
+	// 获取给定月份的天数
+	var _getDate = function(date) {
 
-	// 构造函数
-	var Calendar = function(outsetNode, config) {
+		var formatDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+		return formatDate.getDate();
+	};
 
-		var self = this;
-
-		// 依据定位的元素(必填)
-		self.outsetNode = outsetNode;
-
-		// 日历模式: 0-日，1-周，2-月
-		self.mode = _deal(config, mode, 0);
-		// 是否单个模式
-		self.single = _deal(config, single, false);
-		// 开始时间
-		self.startTime = _deal(config, startTime, new Date());
-		// 结束时间
-		self.endTime = _deal(config, endTime, new Date(self.startTime.getTime()));
+	// Calendar节点构造函数
+	var CalendarNode = function(calendarInstance) {
 
 		// 根节点
 		var wCalendarBoxRootNode = $(document.createElement('div'));
-		// 设置属性
 		wCalendarBoxRootNode
 		.attr('unselectable', 'on')
 		.attr('onselectstart', 'return false;')
@@ -57,7 +56,184 @@
 		.html(htmlContent);
 		$('body').append(wCalendarBoxRootNode);
 
-		self.calendarNode = wCalendarBoxRootNode;
+		this.node = wCalendarBoxRootNode;
+		this.calendar = calendarInstance;
+
+		this.bindInitEvents().setTitle().update();
+	};
+	// 绑定事件
+	CalendarNode.prototype.bindInitEvents = function() {
+
+		var self = this;
+		var node = self.node;
+		var calendar = self.calendar;
+
+		node.find('.start-box .turn-left').click(function() {
+
+			var timeTurned = new Date(calendar.startTimeTurned.getTime());
+			calendar.startTimeTurned = new Date(timeTurned.getFullYear(), timeTurned.getMonth() - 1);
+			self.setItems(0);
+		});
+		node.find('.start-box .turn-right').click(function() {
+
+			var timeTurned = new Date(calendar.startTimeTurned.getTime());
+			calendar.startTimeTurned = new Date(timeTurned.getFullYear(), timeTurned.getMonth() + 1);
+			self.setItems(0);
+		});
+		node.find('.end-box .turn-left').click(function() {
+
+			var timeTurned = new Date(calendar.endTimeTurned.getTime());
+			calendar.endTimeTurned = new Date(timeTurned.getFullYear(), timeTurned.getMonth() - 1);
+			self.setItems(1);
+		});
+		node.find('.end-box .turn-right').click(function() {
+
+			var timeTurned = new Date(calendar.endTimeTurned.getTime());
+			calendar.endTimeTurned = new Date(timeTurned.getFullYear(), timeTurned.getMonth() + 1);
+			self.setItems(1);
+		});
+		return this;
+	};
+	// 设置title
+	CalendarNode.prototype.setTitle = function() {
+
+		var node = this.node;
+		var calendar = this.calendar;
+		node.find('.start-box .cal-description').text(calendar.titleLeft);
+		node.find('.end-box .cal-description').text(calendar.titleRight);
+		return this;
+	};
+	// 设置月份
+	CalendarNode.prototype.setMonth = function() {
+
+		var node = this.node;
+		var calendar = this.calendar;
+		var startTime = calendar.startTimeTurned;
+		var endTime = calendar.endTimeTurned;
+		var monthStrStart = startTime.getFullYear() + '.' + (startTime.getMonth() + 1);
+		var monthStrEnd = endTime.getFullYear() + '.' + (endTime.getMonth() + 1);
+		node.find('.start-box .show-mnth').text(monthStrStart);
+		node.find('.end-box .show-mnth').text(monthStrEnd);
+		return this;
+	};
+	// 选择日期
+	CalendarNode.prototype.selectDate = function(date, type) {
+
+		var calendar = this.calendar;
+		var timeTurned;
+		// 左侧
+		if (type === 0) {
+			timeTurned = calendar.startTimeTurned;
+			calendar.startTimeSelected = new Date(timeTurned.getFullYear(), timeTurned.getMonth(), date);
+		}
+		// 右侧
+		else if (type === 1) {
+			timeTurned = calendar.endTimeTurned;
+			calendar.endTimeSelected = new Date(timeTurned.getFullYear(), timeTurned.getMonth(), date);
+		}
+		this.setItems();
+	};
+	// 设置日期
+	CalendarNode.prototype.setItems = function(type) {
+
+		var self = this;
+		var node = this.node;
+		var calendar = this.calendar;
+		var timeTurned, timeSelected, container;
+		// 左侧
+		if (type === 0) {
+			timeTurned = calendar.startTimeTurned;
+			timeSelected = calendar.startTimeSelected;
+			container = node.find('.start-box .cal-date');
+		}
+		// 右侧
+		else if (type === 1) {
+			timeTurned = calendar.endTimeTurned;
+			timeSelected = calendar.endTimeSelected;
+			container = node.find('.end-box .cal-date');
+		}
+
+		var firstDay = new Date(timeTurned.getFullYear(), timeTurned.getMonth(), 1).getDay();
+		var dateSelected = timeSelected.getDate();
+		var totalDate = _getDate(timeTurned);
+		container.empty();
+		// 绘制空白部分
+		for (var i = 0; i < firstDay; i ++) {
+			var span = $(document.createElement('span'));
+			span.text('&nbsp;');
+			container.append(span);
+		}
+		// 绘制日期部分
+		for (var j = 0; j < totalDate; j ++) {
+			var span = $(document.createElement('span'));
+			span.text(i + 1);
+			if (timeSelected.getFullYear() === timeTurned.getFullYear() && timeSelected.getMonth() === timeTurned.getMonth() && timeSelected.getDate() === i + 1) {
+				span.addClass('current');
+			}
+			else {
+				span.click(function() {
+					self.selectDate(Number(span.text()), type);
+				});
+			}
+		}
+		return this;
+	};
+	// 设置进度条
+	CalendarNode.prototype.setProgress = function() {
+
+		var node = this.node;
+		var calendar = this.calendar;
+		var startTimeSelected = calendar.startTimeSelected;
+		var endTimeSelected = calendar.endTimeSelected;
+		var totalStart = _getDate(startTimeSelected);
+		var totalEnd = _getDate(endTimeSelected);
+		var pctStart = startTimeSelected.getDate() / totalStart * 100;
+		var pctEnd = endTimeSelected.getDate() / totalEnd * 100;
+		node.find('.start-box .cal-progress .cal-sub-pro').css('width', pctStart + '%');
+		node.find('.end-box .cal-progress .cal-sub-pro').css('width', pctEnd + '%');
+		return this;
+	};
+	// 更新
+	CalendarNode.prototype.update = function() {
+
+		this.setMonth().setItems().setProgress();
+		return this;
+	};
+
+	// 构造函数
+	var Calendar = function(outsetNode, config) {
+
+		var self = this, stamp, startTimeStamp, endTimeStamp, wCalendarBoxRootNode;
+
+		// 依据定位的元素(必填)
+		self.outsetNode = outsetNode;
+
+		// 日历模式: 0-日，1-周，2-月
+		self.mode = _deal(config, 'mode', 0);
+		// 是否单个模式
+		self.single = _deal(config, 'single', false);
+		// title
+		self.titleLeft = _deal(config, 'titleLeft', 'Start Date and Time');
+		self.titleRight = _deal(config, 'titleRight', 'End Date and Time');
+
+		stamp = Date.now();
+		// 开始时间
+		self.startTime = _deal(config, 'startTime', new Date(stamp));
+		// 结束时间
+		self.endTime = _deal(config, 'endTime', new Date(stamp));
+
+		// 用户选定的时间
+		startTimeStamp = self.startTime.getTime();
+		endTimeStamp = self.endTime.getTime();
+		self.startTimeSelected = new Date(startTimeStamp);
+		self.endTimeSelected = new Date(endTimeStamp);
+
+		// 当前所在页面的时间
+		self.startTimeTurned = new Date(startTimeStamp);
+		self.endTimeTurned = new Date(endTimeStamp);
+
+		// 日历元素实例
+		self.calendarNodeInstance = new CalendarNode(self);
 	};
 
 	var fn = Calendar.prototype;
