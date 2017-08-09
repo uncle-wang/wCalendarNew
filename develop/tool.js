@@ -11,7 +11,10 @@
 	// dom类
 	var $ = function(selector) {
 
-		if (typeof selector === 'string') {
+		if (selector === window) {
+			this.nodeList = [window];
+		}
+		else if (typeof selector === 'string') {
 			this.nodeList = document.querySelectorAll(selector);
 		}
 		else if (typeof selector === 'object') {
@@ -50,17 +53,35 @@
 	};
 	$.prototype.html = function(content) {
 		
-		_loop(this.nodeList, function(item) {
-			item.innerHTML = content;
-		});
-		return this;
+		if (content === undefined) {
+			var ele = this.nodeList[0];
+			if (ele) {
+				return ele.innerHTML;
+			}
+		}
+		else {
+			_loop(this.nodeList, function(item) {
+				item.innerHTML = content;
+			});
+			return this;
+		}
+		return;
 	};
 	$.prototype.text = function(content) {
 		
-		_loop(this.nodeList, function(item) {
-			item.innerText = content;
-		});
-		return this;
+		if (content === undefined) {
+			var ele = this.nodeList[0];
+			if (ele) {
+				return ele.innerText;
+			}
+		}
+		else {
+			_loop(this.nodeList, function(item) {
+				item.innerText = content;
+			});
+			return this;
+		}
+		return;
 	};
 	$.prototype.empty = function() {
 
@@ -76,20 +97,6 @@
 		});
 		return this;
 	};
-	$.prototype.after = function(node) {
-
-		_loop(this.nodeList, function(item) {
-			var parentNode = item.parentNode;
-			// 如果目标元素是最后一个元素，则将新元素append到目标元素的父元素下
-			if (parentNode.lastChild === item) {
-				parentNode.appendChild(node.nodeList[0]);
-			}
-			// 如果目标元素不是最后一个元素，则在目标元素的下一个兄弟元素前插入新元素
-			else {
-				parentNode.insertBefore(node.nodeList[0], item.nextSibling);
-			}
-		});
-	};
 	$.prototype.find = function(selector) {
 
 		var nodeList = [];
@@ -101,7 +108,119 @@
 		});
 		return new $(nodeList);
 	};
-	$.prototype.click = function() {};
+	$.prototype.click = function(callback) {
+
+		_loop(this.nodeList, function(item) {
+			if (item.addEventListener) {
+				item.addEventListener('click', function(e) {
+					callback(e);
+				});
+			}
+			else if (item.attachEvent) {
+				item.attachEvent('onclick', function(e) {
+					callback(e);
+				});
+			}
+		});
+	};
+	$.prototype.css = function(key, value) {
+
+		if (value === undefined) {
+			var ele = this.nodeList[0];
+			if (ele) {
+				return ele.style.getPropertyValue(key);
+			}
+		}
+		else {
+			_loop(this.nodeList, function(item) {
+				item.style.setProperty(key, value);
+			});
+			return this;
+		}
+		return;
+	};
+	$.prototype.addClass = function(className) {
+
+		_loop(this.nodeList, function(item) {
+			item.classList.add(className);
+		});
+	};
+	$.prototype.removeClass = function(className) {
+
+		_loop(this.nodeList, function(item) {
+			item.classList.remove(className);
+		});
+	};
+	$.prototype.width = function() {
+
+		var ele = this.nodeList[0];
+		if (ele) {
+			if (ele === window) {
+				if (ele.innerWidth) {
+					return ele.innerWidth;
+				}
+				else if (document.body.clientWidth) {
+					return document.body.clientWidth;
+				}
+			}
+			else {
+				if (ele.offsetWidth) {
+					return ele.offsetWidth;
+				}
+				else if (ele.clientWidth) {
+					return ele.clientWidth;
+				}
+			}
+		}
+		return;
+	};
+	$.prototype.height = function() {
+
+		var ele = this.nodeList[0];
+		if (ele) {
+			if (ele === window) {
+				if (ele.innerHeight) {
+					return ele.innerHeight;
+				}
+				else if (document.body.clientHeight) {
+					return document.body.clientHeight;
+				}
+			}
+			else {
+				if (ele.offsetHeight) {
+					return ele.offsetHeight;
+				}
+				else if (ele.clientHeight) {
+					return ele.clientHeight;
+				}
+			}
+		}
+		return;
+	};
+	$.prototype.fixedOffset = function() {
+
+		var ele = this.nodeList[0];
+		if (ele) {
+			var y = ele.offsetTop - document.body.scrollTop;
+			var x = ele.offsetLeft - document.body.scrollLeft;
+			return {
+				top: y,
+				left: x
+			};
+		}
+	};
+	$.prototype.show = function() {
+
+		_loop(this.nodeList, function(item) {
+			item.style.display = 'block';
+		});
+	};
+	$.prototype.hide = function() {
+
+		_loop(this.nodeList, function(item) {
+			item.style.display = 'none';
+		});
+	};
 
 	// 添加到window对象中
 	window.$wCalendar = function(selector) {

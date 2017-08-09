@@ -38,7 +38,7 @@
 			height: 324px;\
 			border: 1px solid #d2d9de;\
 			background: #fff;\
-			position: absolute;\
+			position: fixed;\
 			border-bottom: none;\
 			border-radius: 4px;\
 			z-index: 2;\
@@ -162,6 +162,7 @@
 			width: 196px;\
 			margin-left: auto;\
 			margin-right: auto;\
+			overflow: hidden;\
 		}\
 		.wCalendar-box .cal-calendar span {\
 			width: 22px;\
@@ -170,7 +171,8 @@
 			line-height: 22px;\
 			font-size: 12px;\
 			text-align: center;\
-			display: inline-block;\
+			display: block;\
+			float: left;\
 		}\
 		.wCalendar-box .cal-calendar .cal-week {\
 			margin-top: 12px;\
@@ -255,77 +257,75 @@
 		.wCalendar-box .cal-buttons input.cal-button:focus {\
 			outline: 0;\
 		}\
-		.wCalendar-box .cal-buttons input:first-child {\
+		.wCalendar-box .cal-buttons input.cancel {\
 			float: left;\
 		}\
-		.wCalendar-box .cal-buttons input:last-child {\
+		.wCalendar-box .cal-buttons input.confirm {\
 			float: right;\
 		}\
 	';
 	var htmlContent = '\
-		<div unselectable="on" onselectstart="return false;" class="wCalendar-box-c">\
-			<div class="wCalendar-box-layer"></div>\
-			<div class="wCalendar-box">\
-				<div class="start-box">\
-					<div class="cal-description"></div>\
-					<div class="cal-month">\
-						<span class="turn-left">&lt;</span>\
-						<span class="show-mnth"></span>\
-						<span class="turn-rigt">&gt;</span>\
+		<div class="wCalendar-box-layer"></div>\
+		<div class="wCalendar-box">\
+			<div class="start-box">\
+				<div class="cal-description"></div>\
+				<div class="cal-month">\
+					<span class="turn-left">&lt;</span>\
+					<span class="show-mnth"></span>\
+					<span class="turn-rigt">&gt;</span>\
+				</div>\
+				<div class="cal-calendar">\
+					<div class="cal-week">\
+						<span>S</span>\
+						<span>M</span>\
+						<span>T</span>\
+						<span>W</span>\
+						<span>T</span>\
+						<span>F</span>\
+						<span>S</span>\
 					</div>\
-					<div class="cal-calendar">\
-						<div class="cal-week">\
-							<span>S</span>\
-							<span>M</span>\
-							<span>T</span>\
-							<span>W</span>\
-							<span>T</span>\
-							<span>F</span>\
-							<span>S</span>\
-						</div>\
-						<div class="cal-date"></div>\
-					</div>\
-					<div class="cal-progress">\
-						<div class="cal-sub-pro">\
-							<div class="cal-pro-point"></div>\
-						</div>\
+					<div class="cal-date"></div>\
+				</div>\
+				<div class="cal-progress">\
+					<div class="cal-sub-pro">\
+						<div class="cal-pro-point"></div>\
 					</div>\
 				</div>\
-				<div class="end-box">\
-					<div class="cal-description"></div>\
-					<div class="cal-month">\
-						<span class="turn-left">&lt;</span>\
-						<span class="show-mnth"></span>\
-						<span class="turn-rigt">&gt;</span>\
-					</div>\
-					<div class="cal-calendar">\
-						<div class="cal-week">\
-							<span>S</span>\
-							<span>M</span>\
-							<span>T</span>\
-							<span>W</span>\
-							<span>T</span>\
-							<span>F</span>\
-							<span>S</span>\
-						</div>\
-						<div class="cal-date"></div>\
-					</div>\
-					<div class="cal-progress">\
-						<div class="cal-sub-pro">\
-							<div class="cal-pro-point"></div>\
-						</div>\
-					</div>\
-				</div>\
-				<div class="cal-buttons">\
-					<input class="cal-button" type="button" value="Cancel">\
-					<input class="cal-button" type="button" value="Confirm">\
-				</div>\
-				<div class="arrow top">\
-					<div class="arrow-bg"></div>\
-				</div>\
-				<div class="arrow bottom"></div>\
-				<div class="folding">to</div>\
 			</div>\
+			<div class="end-box">\
+				<div class="cal-description"></div>\
+				<div class="cal-month">\
+					<span class="turn-left">&lt;</span>\
+					<span class="show-mnth"></span>\
+					<span class="turn-rigt">&gt;</span>\
+				</div>\
+				<div class="cal-calendar">\
+					<div class="cal-week">\
+						<span>S</span>\
+						<span>M</span>\
+						<span>T</span>\
+						<span>W</span>\
+						<span>T</span>\
+						<span>F</span>\
+						<span>S</span>\
+					</div>\
+					<div class="cal-date"></div>\
+				</div>\
+				<div class="cal-progress">\
+					<div class="cal-sub-pro">\
+						<div class="cal-pro-point"></div>\
+					</div>\
+				</div>\
+			</div>\
+			<div class="cal-buttons">\
+				<input class="cal-button cancel" type="button" value="Cancel">\
+				<input class="cal-button confirm" type="button" value="Confirm">\
+			</div>\
+			<div class="arrow top">\
+				<div class="arrow-bg"></div>\
+			</div>\
+			<div class="arrow bottom"></div>\
+			<div class="folding">to</div>\
 		</div>\
 	';
 
@@ -367,7 +367,7 @@
 		wCalendarBoxRootNode
 		.attr('unselectable', 'on')
 		.attr('onselectstart', 'return false;')
-		.attr('class', 'wCalendar_box_c')
+		.attr('class', 'wCalendar-box-c')
 		.html(htmlContent);
 		$('body').append(wCalendarBoxRootNode);
 
@@ -383,29 +383,37 @@
 		var node = self.node;
 		var calendar = self.calendar;
 
+		node.find('.wCalendar-box-layer, .cal-button.cancel').click(function() {
+
+			self.hide();
+		});
+		node.find('.cal-button.confirm').click(function() {
+
+			self.confirmUserSelectedTime();
+		});
 		node.find('.start-box .turn-left').click(function() {
 
 			var timeTurned = new Date(calendar.startTimeTurned.getTime());
 			calendar.startTimeTurned = new Date(timeTurned.getFullYear(), timeTurned.getMonth() - 1);
-			self.setItems(0);
+			self.update();
 		});
-		node.find('.start-box .turn-right').click(function() {
+		node.find('.start-box .turn-rigt').click(function() {
 
 			var timeTurned = new Date(calendar.startTimeTurned.getTime());
 			calendar.startTimeTurned = new Date(timeTurned.getFullYear(), timeTurned.getMonth() + 1);
-			self.setItems(0);
+			self.update();
 		});
 		node.find('.end-box .turn-left').click(function() {
 
 			var timeTurned = new Date(calendar.endTimeTurned.getTime());
 			calendar.endTimeTurned = new Date(timeTurned.getFullYear(), timeTurned.getMonth() - 1);
-			self.setItems(1);
+			self.update();
 		});
-		node.find('.end-box .turn-right').click(function() {
+		node.find('.end-box .turn-rigt').click(function() {
 
 			var timeTurned = new Date(calendar.endTimeTurned.getTime());
 			calendar.endTimeTurned = new Date(timeTurned.getFullYear(), timeTurned.getMonth() + 1);
-			self.setItems(1);
+			self.update();
 		});
 		return this;
 	};
@@ -448,6 +456,19 @@
 		}
 		this.setItems(0).setItems(1);
 	};
+	// 确认选择的日期
+	CalendarNode.prototype.confirmUserSelectedTime = function() {
+
+		var calendar = this.calendar;
+		var startTimeSelected = calendar.startTimeSelected.getTime();
+		var endTimeSelected = calendar.endTimeSelected.getTime();
+		calendar.startTime = new Date(startTimeSelected);
+		calendar.endTime = new Date(endTimeSelected);
+		calendar.startTimeTurned = new Date(startTimeSelected);
+		Calendar.endTimeTurned = new Date(endTimeSelected);
+		this.setItems(0).setItems(1);
+		this.hide();
+	};
 	// 设置日期
 	CalendarNode.prototype.setItems = function(type) {
 
@@ -475,22 +496,24 @@
 		// 绘制空白部分
 		for (var i = 0; i < firstDay; i ++) {
 			var span = $(document.createElement('span'));
-			span.text('&nbsp;');
 			container.append(span);
 		}
 		// 绘制日期部分
 		for (var j = 0; j < totalDate; j ++) {
 			var span = $(document.createElement('span'));
-			span.text(i + 1);
-			if (timeSelected.getFullYear() === timeTurned.getFullYear() && timeSelected.getMonth() === timeTurned.getMonth() && timeSelected.getDate() === i + 1) {
+			span.text(j + 1);
+			container.append(span);
+			if (timeSelected.getFullYear() === timeTurned.getFullYear() && timeSelected.getMonth() === timeTurned.getMonth() && timeSelected.getDate() === j + 1) {
 				span.addClass('current');
 			}
 			else {
-				span.click(function() {
-					self.selectDate(Number(span.text()), type);
-				});
+				span.addClass('enabled');
 			}
 		}
+		container.find('span.enabled').click(function(e) {
+			var item = $(e.target);
+			self.selectDate(Number(item.text()), type);
+		});
 		return this;
 	};
 	// 设置进度条
@@ -513,7 +536,7 @@
 
 		var calendarEle = this.node;
 		var ele = this.calendar.outsetNode;
-		var top, left, calendarBox = calendarEle.find('.wCalendar-box'), offsetX = ele.offset().left, offsetY = ele.offset().top, width = ele.width(), height = ele.height();
+		var top, left, calendarBox = calendarEle.find('.wCalendar-box'), offsetX = ele.fixedOffset().left, offsetY = ele.fixedOffset().top, width = ele.width(), height = ele.height();
 		calendarEle.find('.arrow').hide();
 		if ($(window).width() - offsetX - width > offsetX) {
 			left = offsetX;
@@ -538,7 +561,16 @@
 	// 隐藏
 	CalendarNode.prototype.hide = function() {
 
+		var calendar = this.calendar;
+		// 恢复用户选中的时间为日历时间并且定位到当前页
+		var startTime = new Date(calendar.startTime.getTime());
+		var endTime = new Date(calendar.endTime.getTime());
+		calendar.startTimeSelected = new Date(startTime.getTime());
+		calendar.startTimeTurned = new Date(startTime.getTime());
+		calendar.endTimeSelected = new Date(endTime.getTime());
+		calendar.endTimeTurned = new Date(endTime.getTime());
 		this.node.hide();
+		this.update();
 		return this;
 	};
 	// 更新
@@ -582,6 +614,11 @@
 
 		// 日历元素实例
 		self.calendarNodeInstance = new CalendarNode(self);
+
+		self.outsetNode.click(function() {
+
+			self.calendarNodeInstance.show();
+		});
 	};
 
 	var fn = Calendar.prototype;
@@ -596,15 +633,8 @@
 	//隐藏日历
 	fn.hide = function() {
 
-		// 恢复用户选中的时间为日历时间并且定位到当前页
-		var startTime = new Date(this.startTime.getTime());
-		var endTime = new Date(this.endTime.getTime());
-		this.startTimeSelected = new Date(startTime.getTime());
-		this.startTimeTurned = new Date(startTime.getTime());
-		this.endTimeSelected = new Date(endTime.getTime());
-		this.endTimeTurned = new Date(endTime.getTime());
 		// 隐藏并更新元素
-		this.calendarNodeInstance.hide().update();
+		this.calendarNodeInstance.hide();
 	};
 
 	//设置日历时间；可传入两个13位时间戳格式的参数或六个年月日的组合，如setTime(1466352000000, 1466438399000)，或setTime(2015,1,2,2015,12,20);设置成功返回true，失败返回false
