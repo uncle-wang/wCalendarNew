@@ -1,3 +1,238 @@
+(function() {
+
+	// dom常用方法封装
+	// 循环
+	var _loop = function(arr, callback) {
+
+		for (var i = 0; i < arr.length; i ++) {
+			callback(arr[i]);
+		}
+	};
+	// dom类
+	var $ = function(selector) {
+
+		if (selector) {
+			if (selector === window) {
+				this.nodeList = [window];
+			}
+			else if (typeof selector === 'string') {
+				this.nodeList = document.querySelectorAll(selector);
+			}
+			else if (typeof selector === 'object') {
+				if (selector.length !== undefined) {
+					this.nodeList = selector;
+				}
+				else {
+					this.nodeList = [selector];
+				}
+			}
+		}
+		else {
+			throw new Error('1 argument required');
+		}
+	};
+	// dom类方法
+	$.prototype.eq = function(index) {
+
+		if (this.nodeList.length > index) {
+			return new $(this.nodeList[index]);
+		}
+		return;
+	};
+	$.prototype.attr = function(attr, value) {
+		
+		// 取值
+		if (value === undefined) {
+			if (this.nodeList[0]) {
+				return this.nodeList[0].getAttribute(attr);
+			}
+		}
+		// 设置值
+		else {
+			_loop(this.nodeList, function(item) {
+				item.setAttribute(attr, value);
+			});
+			return this;
+		}
+		return;
+	};
+	$.prototype.html = function(content) {
+		
+		if (content === undefined) {
+			var ele = this.nodeList[0];
+			if (ele) {
+				return ele.innerHTML;
+			}
+		}
+		else {
+			_loop(this.nodeList, function(item) {
+				item.innerHTML = content;
+			});
+			return this;
+		}
+		return;
+	};
+	$.prototype.text = function(content) {
+		
+		if (content === undefined) {
+			var ele = this.nodeList[0];
+			if (ele) {
+				return ele.innerText;
+			}
+		}
+		else {
+			_loop(this.nodeList, function(item) {
+				item.innerText = content;
+			});
+			return this;
+		}
+		return;
+	};
+	$.prototype.empty = function() {
+
+		_loop(this.nodeList, function(item) {
+			item.innerHTML = '';
+		});
+		return this;
+	};
+	$.prototype.append = function(node) {
+
+		_loop(this.nodeList, function(item) {
+			item.appendChild(node.nodeList[0]);
+		});
+		return this;
+	};
+	$.prototype.find = function(selector) {
+
+		var nodeList = [];
+		_loop(this.nodeList, function(item) {
+			var resultList = item.querySelectorAll(selector);
+			for (var i = 0; i < resultList.length; i ++) {
+				nodeList.push(resultList[i]);
+			}
+		});
+		return new $(nodeList);
+	};
+	$.prototype.click = function(callback) {
+
+		_loop(this.nodeList, function(item) {
+			if (item.addEventListener) {
+				item.addEventListener('click', function(e) {
+					callback(e);
+				});
+			}
+			else if (item.attachEvent) {
+				item.attachEvent('onclick', function(e) {
+					callback(e);
+				});
+			}
+		});
+	};
+	$.prototype.css = function(key, value) {
+
+		if (value === undefined) {
+			var ele = this.nodeList[0];
+			if (ele) {
+				return ele.style.getPropertyValue(key);
+			}
+		}
+		else {
+			_loop(this.nodeList, function(item) {
+				item.style.setProperty(key, value);
+			});
+			return this;
+		}
+		return;
+	};
+	$.prototype.addClass = function(className) {
+
+		_loop(this.nodeList, function(item) {
+			item.classList.add(className);
+		});
+	};
+	$.prototype.removeClass = function(className) {
+
+		_loop(this.nodeList, function(item) {
+			item.classList.remove(className);
+		});
+	};
+	$.prototype.width = function() {
+
+		var ele = this.nodeList[0];
+		if (ele) {
+			if (ele === window) {
+				if (ele.innerWidth) {
+					return ele.innerWidth;
+				}
+				else if (document.body.clientWidth) {
+					return document.body.clientWidth;
+				}
+			}
+			else {
+				if (ele.offsetWidth) {
+					return ele.offsetWidth;
+				}
+				else if (ele.clientWidth) {
+					return ele.clientWidth;
+				}
+			}
+		}
+		return;
+	};
+	$.prototype.height = function() {
+
+		var ele = this.nodeList[0];
+		if (ele) {
+			if (ele === window) {
+				if (ele.innerHeight) {
+					return ele.innerHeight;
+				}
+				else if (document.body.clientHeight) {
+					return document.body.clientHeight;
+				}
+			}
+			else {
+				if (ele.offsetHeight) {
+					return ele.offsetHeight;
+				}
+				else if (ele.clientHeight) {
+					return ele.clientHeight;
+				}
+			}
+		}
+		return;
+	};
+	$.prototype.fixedOffset = function() {
+
+		var ele = this.nodeList[0];
+		if (ele) {
+			var y = ele.offsetTop - document.body.scrollTop;
+			var x = ele.offsetLeft - document.body.scrollLeft;
+			return {
+				top: y,
+				left: x
+			};
+		}
+	};
+	$.prototype.show = function() {
+
+		_loop(this.nodeList, function(item) {
+			item.style.display = 'block';
+		});
+	};
+	$.prototype.hide = function() {
+
+		_loop(this.nodeList, function(item) {
+			item.style.display = 'none';
+		});
+	};
+
+	// 添加到window对象中
+	window.$wCalendar = function(selector) {
+		return new $(selector);
+	};
+}());
+
 (function(global, factory) {
 
 	// 判断jQuery
@@ -583,7 +818,7 @@
 	// 构造函数
 	var Calendar = function(outsetNode, config) {
 
-		var self = this, stamp, startTimeStamp, endTimeStamp, wCalendarBoxRootNode;
+		var self = this, tempDay, tempTime, stamp, startTimeStamp, endTimeStamp, wCalendarBoxRootNode;
 
 		// 依据定位的元素(必填)
 		self.outsetNode = $(outsetNode);
@@ -596,7 +831,17 @@
 		self.titleLeft = _deal(config, 'titleLeft', 'Start Date and Time');
 		self.titleRight = _deal(config, 'titleRight', 'End Date and Time');
 
-		stamp = Date.now();
+		tempTime = new Date();
+		// 星期模式
+		if (config.mode === 1) {
+			tempDay = tempTime.getDay() || 7;
+			tempTime.setDate(tempTime.getDate() - tempDay + 1);
+		}
+		// 月份模式
+		else if (config.mode === 2) {
+			tempTime.setDate(1);
+		}
+		stamp = tempTime.getTime();
 		// 开始时间
 		self.startTime = _deal(config, 'startTime', new Date(stamp));
 		// 结束时间
@@ -638,13 +883,68 @@
 	};
 
 	//设置日历时间；可传入两个13位时间戳格式的参数或六个年月日的组合，如setTime(1466352000000, 1466438399000)，或setTime(2015,1,2,2015,12,20);设置成功返回true，失败返回false
-	fn.setTime = function() {};
+	fn.setTime = function(startTime, endTime) {
 
-	//获取日历时间；返回包含startTime和endTime两个属性的对象，type参数可选，当type的值为number类型时，返回13位时间戳格式，当type的值为string类型时，返回八位长度的字符串，并以type的值作为分隔符，不传参数及传入其他值返回Date对象
-	fn.getTime = function() {};
+		/****************参数验证****************/
+		var startStamp, endStamp;
+		// startTime必传
+		if (startTime === undefined) {
+			throw new Error('startTime required');
+		}
+		// Date类型
+		if (!(startTime instanceof Date)) {
+			throw new Error('Date instance required');
+		}
+		startStamp = new Date(startTime.getFullYear(), startTime.getMonth(), startTime.getDate()).getTime();
+		// 如果没有传入endTime,则和开始时间相同
+		if (endTime === undefined) {
+			endTime = new Date(startStamp);
+			endStamp = startStamp;
+		}
+		// 如果传入endTime,进行验证
+		else {
+			if (!(endTime instanceof Date)) {
+				throw new Error('Date instance required');
+			}
+			endStamp = new Date(endTime.getFullYear(), endTime.getMonth(), endTime.getDate()).getTime();
+		}
+		// 结束时间小于开始时间报错
+		if (endStamp < startStamp) {
+			throw new Error('endTime smaller than startTime');
+		}
+		// 星期模式下只允许传入星期一的Date对象
+		if (this.mode === 1) {
+			if (startTime.getDay() !== 1 || endTime.getDay() !== 1) {
+				throw new Error('Monday required in week mode');
+			}
+		}
+		// 月份模式下只允许传入x月1日的Date对象
+		if (this.mode === 2) {
+			if (startTime.getDate() !== 1 || endTime.getDate() !== 1) {
+				throw new Error('1st day required in month mode');
+			}
+		}
 
-	//设置日历标题，参数可选，格式为字符串，只传入一个参数时设置开始日历的标题，传入的值为空字符串时，不设置对应的标题，如calendar.setTitle('', 'demo')，将只设置结束日历(右半部分)的标题
-	fn.setTitle = function() {};
+		/****************设置时间****************/
+		this.startTime = new Date(startStamp);
+		this.endTime = new Date(endStamp);
+		this.startTimeSelected = new Date(startStamp);
+		this.endTimeSelected = new Date(endStamp);
+		this.startTimeTurned = new Date(startStamp);
+		this.endTimeTurned = new Date(endStamp);
+		this.calendarNodeInstance.update();
+	};
+
+	//获取日历时间；返回包含startTime和endTime两个属性的对象
+	fn.getTime = function() {
+
+		var startTime = new Date(this.startTime.getTime());
+		var endTime = new Date(this.endTime.getTime());
+		return {
+			startTime: startTime,
+			endTime: endTime
+		};
+	};
 
 	window.wCalendar = {
 
@@ -656,6 +956,12 @@
 			if (outsetNode === undefined) {
 				_error('1 argument required');
 				return;
+			}
+			else {
+				if (!$(outsetNode).nodeList[0]) {
+					_error(outsetNode + ' doesn\'t exist');
+					return;
+				}
 			}
 			// config可选
 			if (config !== undefined) {
@@ -710,7 +1016,7 @@
 				}
 			}
 			// 生成Calendar实例
-			var calendar = new Calendar(outsetNode, config);
+			var calendar = new Calendar($(outsetNode).nodeList[0], config);
 			return calendar;
 		},
 		// 配置

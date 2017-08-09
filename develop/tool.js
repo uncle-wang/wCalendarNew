@@ -11,19 +11,24 @@
 	// dom类
 	var $ = function(selector) {
 
-		if (selector === window) {
-			this.nodeList = [window];
-		}
-		else if (typeof selector === 'string') {
-			this.nodeList = document.querySelectorAll(selector);
-		}
-		else if (typeof selector === 'object') {
-			if (selector.length !== undefined) {
-				this.nodeList = selector;
+		if (selector) {
+			if (selector === window) {
+				this.nodeList = [window];
 			}
-			else {
-				this.nodeList = [selector];
+			else if (typeof selector === 'string') {
+				this.nodeList = document.querySelectorAll(selector);
 			}
+			else if (typeof selector === 'object') {
+				if (selector.length !== undefined) {
+					this.nodeList = selector;
+				}
+				else {
+					this.nodeList = [selector];
+				}
+			}
+		}
+		else {
+			throw new Error('1 argument required');
 		}
 	};
 	// dom类方法

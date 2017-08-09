@@ -182,11 +182,11 @@
 		<div>有种点我!</div>
 	</div>
 	<script type="text/javascript" src="jquery-2.1.4.min.js"></script>
-	<script type="text/javascript" src="develop/tool.js"></script>
 	<script type="text/javascript" src="develop/wCalendar.js"></script>
 	<script type="text/javascript">
-		var btn = document.getElementById('btn');
-		var calendar = wCalendar.init(btn);
+		var calendar = wCalendar.init('#btn', {
+			titleRight: 'haha'
+		});
 	</script>
 </body>
 </html>
