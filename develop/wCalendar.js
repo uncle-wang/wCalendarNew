@@ -703,6 +703,9 @@
 		Calendar.endTimeTurned = new Date(endTimeSelected);
 		this.setItems(0).setItems(1);
 		this.hide();
+		if (calendar.callback) {
+			calendar.callback(new Date(startTimeSelected), new Date(endTimeSelected));
+		}
 	};
 	// 设置日期
 	CalendarNode.prototype.setItems = function(type) {
@@ -860,6 +863,11 @@
 		// 日历元素实例
 		self.calendarNodeInstance = new CalendarNode(self);
 
+		// 回调函数
+		if (config.callback) {
+			self.callback = config.callback;
+		}
+
 		self.outsetNode.click(function() {
 
 			self.calendarNodeInstance.show();
@@ -1013,6 +1021,13 @@
 							}
 						}
 					}
+					// 回调函数
+					if (config.callback !== undefined) {
+						if (typeof config.callback !== 'function') {
+							_error('callback: function required');
+							return;
+						}
+					}
 				}
 			}
 			// 生成Calendar实例
@@ -1020,7 +1035,7 @@
 			return calendar;
 		},
 		// 配置
-		config: function(configs) {}
+		config: function(config) {}
 	};
 
 	return;
