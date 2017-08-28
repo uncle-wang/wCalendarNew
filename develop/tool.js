@@ -127,6 +127,7 @@
 				});
 			}
 		});
+		return this;
 	};
 	$.prototype.css = function(key, value) {
 
@@ -149,12 +150,14 @@
 		_loop(this.nodeList, function(item) {
 			item.classList.add(className);
 		});
+		return this;
 	};
 	$.prototype.removeClass = function(className) {
 
 		_loop(this.nodeList, function(item) {
 			item.classList.remove(className);
 		});
+		return this;
 	};
 	$.prototype.width = function() {
 
@@ -219,12 +222,14 @@
 		_loop(this.nodeList, function(item) {
 			item.style.display = 'block';
 		});
+		return this;
 	};
 	$.prototype.hide = function() {
 
 		_loop(this.nodeList, function(item) {
 			item.style.display = 'none';
 		});
+		return this;
 	};
 
 	// 添加到window对象中
