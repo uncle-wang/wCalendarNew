@@ -24,7 +24,7 @@
 	height: 324px;
 	border: 1px solid #d2d9de;
 	background: #fff;
-	position: absolute;
+	position: fixed;
 	border-bottom: none;
 	border-radius: 4px;
 	z-index: 2;
@@ -148,6 +148,7 @@
 	width: 196px;
 	margin-left: auto;
 	margin-right: auto;
+	overflow: hidden;
 }
 .wCalendar-box .cal-calendar span {
 	width: 22px;
@@ -156,7 +157,8 @@
 	line-height: 22px;
 	font-size: 12px;
 	text-align: center;
-	display: inline-block;
+	display: block;
+	float: left;
 }
 .wCalendar-box .cal-calendar .cal-week {
 	margin-top: 12px;
@@ -241,9 +243,9 @@
 .wCalendar-box .cal-buttons input.cal-button:focus {
 	outline: 0;
 }
-.wCalendar-box .cal-buttons input:first-child {
+.wCalendar-box .cal-buttons input.cancel {
 	float: left;
 }
-.wCalendar-box .cal-buttons input:last-child {
+.wCalendar-box .cal-buttons input.confirm {
 	float: right;
 }
